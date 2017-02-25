@@ -19,22 +19,25 @@ mod tests {
     const SEED: &'static [usize] = &[1, 2, 3, 4];
 
     #[test]
-    fn it_works() {
-    }
-
-    #[test]
-    fn fortran_saxpy() {
+    fn sxapy() {
         use self::rblas::Axpy;
+        use std::f32::consts::PI;
 
-        let a = 3.14;
-        let x = vec![1.0, 2.0, 3.0];
-        let mut y = vec![2.0, 4.0, 6.0];
+        let mut rng: StdRng= SeedableRng::from_seed(SEED);
 
-        Axpy::axpy(&a, &x, &mut y);
+        let x = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
+        let y = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
+
+        let mut fortran_result = y.clone();
+        Axpy::axpy(&PI, &x, &mut fortran_result);
+
+        let rust_result = axpy(PI, &x, y.clone());
+
+        assert_eq!(fortran_result, rust_result);
     }
 
     #[bench]
-    fn benchmark_saxpy_1000_baseline(b: &mut test::Bencher) {
+    fn saxpy_1000_baseline(b: &mut test::Bencher) {
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
 
         let x = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
@@ -44,7 +47,7 @@ mod tests {
     }
 
     #[bench]
-    fn benchmark_saxpy_1000_rust(b: &mut test::Bencher) {
+    fn saxpy_1000_rust(b: &mut test::Bencher) {
         use std::f32::consts::PI;
 
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
@@ -56,7 +59,7 @@ mod tests {
     }
 
     #[bench]
-    fn benchmark_saxpy_1000_fortran(b: &mut test::Bencher) {
+    fn saxpy_1000_fortran(b: &mut test::Bencher) {
         use self::rblas::Axpy;
         use std::f32::consts::PI;
 
