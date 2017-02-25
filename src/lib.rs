@@ -21,6 +21,8 @@ mod tests {
     #[test]
     fn sxapy() {
         use self::rblas::Axpy;
+
+        use std::f32::EPSILON;
         use std::f32::consts::PI;
 
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
@@ -33,7 +35,11 @@ mod tests {
 
         let rust_result = axpy(PI, &x, y.clone());
 
-        assert_eq!(fortran_result, rust_result);
+        assert_eq!(fortran_result.len(), rust_result.len());
+
+        for (f, r) in fortran_result.iter().zip(rust_result) {
+            assert!((f-r).abs() <= EPSILON);
+        }
     }
 
     #[bench]
