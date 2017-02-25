@@ -1,0 +1,10 @@
+[package]
+name = "y"
+version = "0.1.0"
+authors = ["MurphyMarkW <murphy.mark.w+github@gmail.com>"]
+
+[dependencies]
+
+[dev-dependencies]
+rblas = {}
+rand = {}
