@@ -1,4 +1,5 @@
 # Y CHALLENGE GO!
+[![Build Status](https://travis-ci.org/MurphyMarkW/y.svg?branch=master)](https://travis-ci.org/MurphyMarkW/y)
 
 Real simple - can we get a pure rust implementation of saxpy to match performance
 w/ the fortran implementation? Because Y not?
