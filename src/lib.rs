@@ -3,7 +3,11 @@
 extern crate test;
 
 fn axpy(a: f32, x: &Vec<f32>, y: Vec<f32>) -> Vec<f32> {
-    x.into_iter().zip(y).map(|(m, n)| m.mul_add(a, n)).collect()
+    let mut y = y;
+    for i in 0..y.len() {
+        y[i] = x[i].mul_add(a, y[i]);
+    }
+    y
 }
 
 #[cfg(test)]
