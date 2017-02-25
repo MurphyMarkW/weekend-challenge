@@ -4,8 +4,10 @@ extern crate test;
 
 fn axpy(a: f32, x: &Vec<f32>, y: Vec<f32>) -> Vec<f32> {
     let mut y = y;
-    for i in 0..y.len() {
-        y[i] = x[i].mul_add(a, y[i]);
+    unsafe {
+        for i in 0..y.len() {
+            *y.get_unchecked_mut(i) = y.get_unchecked(i) + a * x.get_unchecked(i);
+        }
     }
     y
 }
