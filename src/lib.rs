@@ -14,6 +14,9 @@ pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
         let ys = &mut y[..len];
 
         for i in 0..len {
+            // NOTE Not using f32.mul_add because it seems to have a
+            // consistent order of magnitude lower performance. Would
+            // love to know why and if there's a way to fix that.
             ys[i] = ys[i] + a * xs[i];
         }
     }
