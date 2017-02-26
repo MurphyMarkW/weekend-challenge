@@ -2,10 +2,18 @@
 
 extern crate test;
 
-fn axpy(a: f32, x: &Vec<f32>, y: Vec<f32>) -> Vec<f32> {
-    let mut y = y;
-    for i in 0..y.len() {
-        y[i] = x[i].mul_add(a, y[i]);
+use std::cmp;
+
+pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
+    {
+        let len = cmp::min(x.len(), y.len());
+
+        let xs = &x[..len];
+        let ys = &mut y[..len];
+
+        for i in 0..len {
+            ys[i] = ys[i] + a * xs[i];
+        }
     }
     y
 }
