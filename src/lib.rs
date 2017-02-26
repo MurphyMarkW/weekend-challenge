@@ -5,6 +5,8 @@ extern crate test;
 use std::cmp;
 
 pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
+    // NOTE Lexical scoping shenanigans is in place to help the rust
+    // compiler with eliding bounds checks on slice accesses.
     {
         let len = cmp::min(x.len(), y.len());
 
