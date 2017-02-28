@@ -28,7 +28,7 @@ mod tests {
     extern crate rand;
     extern crate rblas;
 
-    use self::rand::{thread_rng, Rng, StdRng, SeedableRng};
+    use self::rand::{Rng, StdRng, SeedableRng};
 
     // A constant seed that we'll use for initializing random vecs.
     const SEED: &'static [usize] = &[1, 2, 3, 4];
