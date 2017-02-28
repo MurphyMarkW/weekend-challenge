@@ -1,13 +1,12 @@
 #![feature(test)]
 
 extern crate test;
+extern crate rayon;
 
 use std::cmp;
 
-pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
-    // NOTE Lexical scoping shenanigans is in place to help the rust
-    // compiler with eliding bounds checks on slice accesses.
-    {
+fn rayon_axpy(a: f32, x: &[f32], y: &mut [f32]) {
+    if x.len() <= 500 {
         let len = cmp::min(x.len(), y.len());
 
         let xs = &x[..len];
@@ -19,6 +18,28 @@ pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
             // love to know why and if there's a way to fix that.
             ys[i] = ys[i] + a * xs[i];
         }
+    } else {
+        let mid_point = x.len() / 2;
+        let (xleft, xright) = x.split_at(mid_point);
+        let (yleft, yright) = y.split_at_mut(mid_point);
+        rayon::join(|| rayon_axpy(a, xleft, yleft), || rayon_axpy(a, xright, yright));
+    }
+}
+
+pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
+    if a == 0. {
+        return y
+    }
+
+    // NOTE Lexical scoping shenanigans is in place to help the rust
+    // compiler with eliding bounds checks on slice accesses.
+    {
+        let len = cmp::min(x.len(), y.len());
+
+        let xs = &x[..len];
+        let ys = &mut y[..len];
+
+        rayon_axpy(a, xs, ys);
     }
     y
 }
