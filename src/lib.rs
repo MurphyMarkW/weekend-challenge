@@ -4,23 +4,22 @@ extern crate test;
 
 use std::cmp;
 
-pub fn axpy(a: f32, x: &Vec<f32>, mut y: Vec<f32>) -> Vec<f32> {
-    // NOTE Lexical scoping shenanigans is in place to help the rust
-    // compiler with eliding bounds checks on slice accesses.
-    {
-        let len = cmp::min(x.len(), y.len());
-
-        let xs = &x[..len];
-        let ys = &mut y[..len];
-
-        for i in 0..len {
-            // NOTE Not using f32.mul_add because it seems to have a
-            // consistent order of magnitude lower performance. Would
-            // love to know why and if there's a way to fix that.
-            ys[i] = ys[i] + a * xs[i];
-        }
+pub fn axpy(a: f32, x: &[f32], y: &mut [f32]) {
+    if a == 0. {
+        return
     }
-    y
+
+    let len = cmp::min(x.len(), y.len());
+
+    let xs = &x[..len];
+    let ys = &mut y[..len];
+
+    for i in 0..len {
+        // NOTE Not using f32.mul_add because it seems to have a
+        // consistent order of magnitude lower performance. Would
+        // love to know why and if there's a way to fix that.
+        ys[i] = ys[i] + a * xs[i];
+    }
 }
 
 #[cfg(test)]
@@ -48,9 +47,10 @@ mod tests {
         let y = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
 
         let mut fortran_result = y.clone();
-        Axpy::axpy(&PI, &x, &mut fortran_result);
+        let mut rust_result = y.clone();
 
-        let rust_result = axpy(PI, &x, y.clone());
+        Axpy::axpy(&PI, &x, &mut fortran_result);
+        axpy(PI, &x[..], &mut rust_result[..]);
 
         assert_eq!(fortran_result.len(), rust_result.len());
 
@@ -60,25 +60,15 @@ mod tests {
     }
 
     #[bench]
-    fn saxpy_1000_baseline(b: &mut test::Bencher) {
-        let mut rng: StdRng= SeedableRng::from_seed(SEED);
-
-        let x = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
-        let y = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
-        
-        b.iter(|| (&x, y.clone()));
-    }
-
-    #[bench]
     fn saxpy_1000_rust(b: &mut test::Bencher) {
         use std::f32::consts::PI;
 
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
 
         let x = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
-        let y = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
+        let mut y = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
 
-        b.iter(|| axpy(PI, &x, y.clone()));
+        b.iter(|| axpy(PI, &x[..], &mut y[..]));
     }
 
     #[bench]
@@ -89,8 +79,8 @@ mod tests {
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
 
         let x = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
-        let y = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
+        let mut y = rng.gen_iter::<f32>().take(1000).collect::<Vec<f32>>();
 
-        b.iter(|| Axpy::axpy(&PI, &x, &mut y.clone()));
+        b.iter(|| Axpy::axpy(&PI, &x[..], &mut y[..]));
     }
 }
