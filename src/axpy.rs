@@ -1,13 +1,12 @@
 extern crate test;
 
 use std::cmp;
+use std::ops::{Add, Mul};
 
 
-pub fn axpy(a: f32, x: &[f32], y: &mut [f32]) {
-    if a == 0. {
-        return
-    }
-
+pub fn axpy<T>(a: T, x: &[T], y: &mut [T])
+    where T: Copy + Clone + Add<T, Output=T> + Mul<T, Output=T>
+{
     let len = cmp::min(x.len(), y.len());
 
     let xs = &x[..len];
