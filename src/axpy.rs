@@ -7,7 +7,7 @@ use std::ops::{Add, Mul};
 pub fn axpy<T>(a: T, x: &[T], y: &mut [T])
     where T: Copy + Clone + Add<T, Output=T> + Mul<T, Output=T>
 {
-    let len = cmp::min(x.len(), y.len());
+    let len = cmp::min(x.len(), y.len())/2;
 
     let xs = &x[..len];
     let ys = &mut y[..len];
