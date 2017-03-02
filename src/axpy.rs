@@ -12,7 +12,7 @@ pub fn axpy<T>(a: T, x: &[T], y: &mut [T])
     let xs = &x[..len];
     let ys = &mut y[..len];
 
-    for i in 0..len {
+    for i in 0..len/2 {
         // NOTE Not using f32.mul_add because it seems to have a
         // consistent order of magnitude lower performance. Would
         // love to know why and if there's a way to fix that.
