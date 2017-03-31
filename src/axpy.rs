@@ -33,7 +33,7 @@ mod tests {
     const SEED: &'static [usize] = &[1, 2, 3, 4];
 
     #[test]
-    fn sxapy() {
+    fn saxpy() {
         use self::rblas::Axpy;
 
         use std::f32::EPSILON;
