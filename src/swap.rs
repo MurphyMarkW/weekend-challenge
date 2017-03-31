@@ -36,8 +36,8 @@ mod tests {
 
         let mut rng: StdRng= SeedableRng::from_seed(SEED);
 
-        let mut x = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
-        let mut y = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
+        let x = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
+        let y = rng.gen_iter::<f32>().take(3).collect::<Vec<f32>>();
 
         let mut fortran_result = x.clone();
         let mut rust_result = x.clone();
