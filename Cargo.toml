@@ -6,5 +6,5 @@ authors = ["MurphyMarkW <murphy.mark.w+github@gmail.com>"]
 [dependencies]
 
 [dev-dependencies]
-rblas = {}
-rand = {}
+rblas = { version = "0.0.13" }
+rand = { version = "0.3.15" }
