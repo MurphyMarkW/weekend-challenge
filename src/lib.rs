@@ -5,3 +5,4 @@ pub mod axpy;
 pub mod scal;
 pub mod swap;
 pub mod copy;
+pub mod dot;
